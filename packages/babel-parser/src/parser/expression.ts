@@ -1730,13 +1730,12 @@ export default abstract class ExpressionParser extends LValParser {
     pattern: string;
     flags: N.RegExpLiteral["flags"];
   }) {
-    const node = this.parseLiteral<N.RegExpLiteral>(
-      value.value,
-      "RegExpLiteral",
-    );
+    const node = this.startNode<N.RegExpLiteral>();
+    this.addExtra(node, "raw", this.input.slice(node.start, this.state.end));
     node.pattern = value.pattern;
     node.flags = value.flags;
-    return node;
+    this.next();
+    return this.finishNode(node, "RegExpLiteral");
   }
 
   parseBooleanLiteral(value: boolean) {
@@ -2638,7 +2637,7 @@ export default abstract class ExpressionParser extends LValParser {
     this.expressionScope.exit();
   }
 
-  isSimpleParameter(node: N.Pattern | N.TSParameterProperty) {
+  isSimpleParameter(node: N.Pattern | N.TSParameterProperty): boolean {
     return node.type === "Identifier";
   }
 

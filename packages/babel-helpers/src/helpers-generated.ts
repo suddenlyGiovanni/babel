@@ -47,10 +47,10 @@ const helpers: Record<string, Helper> = {
       dependencies: {},
     },
   ),
-  // size: 450, gzip size: 270
+  // size: 447, gzip size: 270
   applyDecoratedDescriptor: helper(
     "7.0.0-beta.0",
-    'function _applyDecoratedDescriptor(i,e,r,n,l){var a={};return Object.keys(n).forEach((function(i){a[i]=n[i]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,n){return n(i,e,r)||r}),a),l&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(l):void 0,a.initializer=void 0),void 0===a.initializer&&(Object.defineProperty(i,e,a),a=null),a}',
+    'function _applyDecoratedDescriptor(i,e,r,n,l){var a={};return Object.keys(n).forEach((function(i){a[i]=n[i]})),a.enumerable=!!a.enumerable,a.configurable=!!a.configurable,("value"in a||a.initializer)&&(a.writable=!0),a=r.slice().reverse().reduce((function(r,n){return n(i,e,r)||r}),a),l&&void 0!==a.initializer&&(a.value=a.initializer?a.initializer.call(l):void 0,a.initializer=void 0),void 0===a.initializer?(Object.defineProperty(i,e,a),null):a}',
     {
       globals: ["Object"],
       locals: { _applyDecoratedDescriptor: ["body.0.id"] },
@@ -959,10 +959,10 @@ const helpers: Record<string, Helper> = {
       },
     },
   ),
-  // size: 277, gzip size: 204
+  // size: 275, gzip size: 198
   objectWithoutProperties: helper(
     "7.0.0-beta.0",
-    "function _objectWithoutProperties(e,t){if(null==e)return{};var o,r,i=objectWithoutPropertiesLoose(e,t);if(Object.getOwnPropertySymbols){var n=Object.getOwnPropertySymbols(e);for(r=0;r<n.length;r++)o=n[r],t.indexOf(o)>=0||{}.propertyIsEnumerable.call(e,o)&&(i[o]=e[o])}return i}",
+    "function _objectWithoutProperties(e,t){if(null==e)return{};var o,r,i=objectWithoutPropertiesLoose(e,t);if(Object.getOwnPropertySymbols){var s=Object.getOwnPropertySymbols(e);for(r=0;r<s.length;r++)o=s[r],t.includes(o)||{}.propertyIsEnumerable.call(e,o)&&(i[o]=e[o])}return i}",
     {
       globals: ["Object"],
       locals: { _objectWithoutProperties: ["body.0.id"] },
@@ -975,10 +975,10 @@ const helpers: Record<string, Helper> = {
       },
     },
   ),
-  // size: 167, gzip size: 155
+  // size: 165, gzip size: 151
   objectWithoutPropertiesLoose: helper(
     "7.0.0-beta.0",
-    "function _objectWithoutPropertiesLoose(r,e){if(null==r)return{};var t={};for(var n in r)if({}.hasOwnProperty.call(r,n)){if(e.indexOf(n)>=0)continue;t[n]=r[n]}return t}",
+    "function _objectWithoutPropertiesLoose(r,e){if(null==r)return{};var t={};for(var n in r)if({}.hasOwnProperty.call(r,n)){if(e.includes(n))continue;t[n]=r[n]}return t}",
     {
       globals: [],
       locals: { _objectWithoutPropertiesLoose: ["body.0.id"] },
