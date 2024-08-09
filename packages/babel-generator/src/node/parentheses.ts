@@ -2,7 +2,6 @@ import {
   isArrayTypeAnnotation,
   isBinaryExpression,
   isCallExpression,
-  isExportDeclaration,
   isForOfStatement,
   isIndexedAccessType,
   isMemberExpression,
@@ -125,14 +124,18 @@ export function UpdateExpression(
   return hasPostfixPart(node, parent) || isClassExtendsClause(node, parent);
 }
 
+function needsParenBeforeExpressionBrace(tokenContext: number) {
+  return Boolean(
+    tokenContext & (TokenContext.expressionStatement | TokenContext.arrowBody),
+  );
+}
+
 export function ObjectExpression(
   node: t.ObjectExpression,
   parent: t.Node,
   tokenContext: number,
 ): boolean {
-  return Boolean(
-    tokenContext & (TokenContext.expressionStatement | TokenContext.arrowBody),
-  );
+  return needsParenBeforeExpressionBrace(tokenContext);
 }
 
 export function DoExpression(
@@ -367,13 +370,6 @@ export function FunctionExpression(
   );
 }
 
-export function ArrowFunctionExpression(
-  node: t.ArrowFunctionExpression,
-  parent: t.Node,
-): boolean {
-  return isExportDeclaration(parent) || ConditionalExpression(node, parent);
-}
-
 export function ConditionalExpression(
   node:
     | t.ConditionalExpression
@@ -397,6 +393,8 @@ export function ConditionalExpression(
   return UnaryLike(node, parent);
 }
 
+export { ConditionalExpression as ArrowFunctionExpression };
+
 export function OptionalMemberExpression(
   node: t.OptionalMemberExpression,
   parent: t.Node,
@@ -412,8 +410,12 @@ export { OptionalMemberExpression as OptionalCallExpression };
 export function AssignmentExpression(
   node: t.AssignmentExpression,
   parent: t.Node,
+  tokenContext: number,
 ): boolean {
-  if (isObjectPattern(node.left)) {
+  if (
+    needsParenBeforeExpressionBrace(tokenContext) &&
+    isObjectPattern(node.left)
+  ) {
     return true;
   } else {
     return ConditionalExpression(node, parent);
