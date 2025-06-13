@@ -221,6 +221,8 @@ const TSErrors = ParseErrorEnum`typescript`({
     "A parameter property may not be declared using a binding pattern.",
   UnsupportedSignatureParameterKind: ({ type }: { type: string }) =>
     `Name in a signature must be an Identifier, ObjectPattern or ArrayPattern, instead got ${type}.`,
+  UsingDeclarationInAmbientContext: (kind: "using" | "await using") =>
+    `'${kind}' declarations are not allowed in ambient contexts.`,
 });
 
 /* eslint-disable sort-keys */
@@ -1798,7 +1800,7 @@ export default (superClass: ClassWithMixin<typeof Parser, IJSXParserMixin>) =>
 
     isAbstractConstructorSignature(): boolean {
       return (
-        this.isContextual(tt._abstract) && this.lookahead().type === tt._new
+        this.isContextual(tt._abstract) && this.isLookaheadContextual("new")
       );
     }
 
@@ -1950,7 +1952,7 @@ export default (superClass: ClassWithMixin<typeof Parser, IJSXParserMixin>) =>
 
         if (
           this.isContextual(tt._intrinsic) &&
-          this.lookahead().type !== tt.dot
+          this.lookaheadCharCode() !== charCodes.dot
         ) {
           const node = this.startNode<N.TsKeywordType>();
           this.next();
@@ -3093,7 +3095,7 @@ export default (superClass: ClassWithMixin<typeof Parser, IJSXParserMixin>) =>
 
     isAbstractClass(): boolean {
       return (
-        this.isContextual(tt._abstract) && this.lookahead().type === tt._class
+        this.isContextual(tt._abstract) && this.isLookaheadContextual("class")
       );
     }
 
@@ -3130,6 +3132,12 @@ export default (superClass: ClassWithMixin<typeof Parser, IJSXParserMixin>) =>
       );
 
       if (!isAmbientContext) return declaration;
+
+      // If node.declare is true, the error has already been raised in tsTryParseDeclare.
+      if (!node.declare && (kind === "using" || kind === "await using")) {
+        this.raise(TSErrors.UsingDeclarationInAmbientContext, node, kind);
+        return declaration;
+      }
 
       for (const { id, init } of declaration.declarations) {
         // Empty initializer is the easy case that we want.
